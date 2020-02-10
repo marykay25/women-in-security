@@ -1,0 +1,883 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Women in Information Security Trend Micro Hands On Workshop",
+  "Metadata": {
+      "AWS::CloudFormation::Interface": {
+          "ParameterGroups": [
+              {
+                  "Label": {
+                      "default": "Web Server Configuration"
+                  },
+                  "Parameters": "KeyName"
+                  
+              }
+          ],
+          "ParameterLabels": {
+              "KeyName": {
+                  "default": "EC2 Key Pair for SSH access"
+              }
+              
+          }
+      }
+  },
+  "Parameters": {
+      "KeyName": {
+        "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+        "Type": "AWS::EC2::KeyPair::KeyName",
+        "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
+      },
+      "WindowsAMI": {
+        "Description": "The latest AMI ID for Windows 2019 Core in English",
+        "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+        "AllowedValues": [
+            "/aws/service/ami-windows-latest/Windows_Server-2012-R2_RTM-English-64Bit-Base",
+            "/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base",
+            "/aws/service/ami-windows-latest/Windows_Server-2019-English-Core-Base",
+            "/aws/service/ami-windows-latest/Windows_Server-2016-English-Full-Base"
+        ],
+        "Default": "/aws/service/ami-windows-latest/Windows_Server-2016-English-Full-Base"
+    },
+    "AMZNLinuxAMI": {
+        "Description": "The latest AMI ID for Windows 2019 Core in English",
+        "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+        "Default": "/aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-gp2"
+    },
+    "AMZNLinux2AMI": {
+        "Description": "The latest AMI ID for Windows 2019 Core in English",
+        "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+        "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+    }
+},
+
+
+  "Resources": {
+    "ACTIVATIONURL": {
+        "Type": "AWS::SSM::Parameter",
+        "Properties": {
+           "Name": "DSMACTIVATIONURL",
+           "Type": "String",
+           "Value":            {
+            "Fn::Join": [
+              "", [
+                "dsm://",
+                {"Fn::GetAtt": ["DSM","PublicDnsName"]},
+                ":4120/"
+              ]
+            ]
+          },
+           "Description": "Activiation URL of the DSM Server for the Script"
+        }
+     },
+     "DSMMANAGERURL": {
+        "Type": "AWS::SSM::Parameter",
+        "Properties": {
+           "Name": "DSMMANAGERURL",
+           "Type": "String",
+           "Value": 
+           {
+            "Fn::Join": [
+              "", [
+                "https://",
+                {"Fn::GetAtt": ["DSM","PublicDnsName"]},
+                ":443"
+              ]
+            ]
+          },
+           
+           "Description": "Management URL of the DSM Server for the Script"
+        }
+     },
+     "ManagedInstanceRole": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [
+                                "ssm.amazonaws.com",
+                                "ec2.amazonaws.com"
+                            ]
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Policies": [
+                {
+                    "PolicyName": "S3andSSMAccess",
+                    "PolicyDocument": {
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "ssm:DescribeAssociation",
+                                    "ssm:GetDeployablePatchSnapshotForInstance",
+                                    "ssm:GetDocument",
+                                    "ssm:DescribeDocument",
+                                    "ssm:GetManifest",
+                                    "ssm:GetParameters",
+                                    "ssm:GetParameter",
+                                    "ssm:ListAssociations",
+                                    "ssm:ListInstanceAssociations",
+                                    "ssm:PutInventory",
+                                    "ssm:PutComplianceItems",
+                                    "ssm:PutConfigurePackageResult",
+                                    "ssm:UpdateAssociationStatus",
+                                    "ssm:UpdateInstanceAssociationStatus",
+                                    "ssm:UpdateInstanceInformation"
+                                ],
+                                "Resource": "*"
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "ssmmessages:CreateControlChannel",
+                                    "ssmmessages:CreateDataChannel",
+                                    "ssmmessages:OpenControlChannel",
+                                    "ssmmessages:OpenDataChannel"
+                                ],
+                                "Resource": "*"
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "ec2messages:AcknowledgeMessage",
+                                    "ec2messages:DeleteMessage",
+                                    "ec2messages:FailMessage",
+                                    "ec2messages:GetEndpoint",
+                                    "ec2messages:GetMessages",
+                                    "ec2messages:SendReply"
+                                ],
+                                "Resource": "*"
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "cloudwatch:PutMetricData"
+                                ],
+                                "Resource": "*"
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "ec2:DescribeInstanceStatus"
+                                ],
+                                "Resource": "*"
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "ds:CreateComputer",
+                                    "ds:DescribeDirectories"
+                                ],
+                                "Resource": "*"
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "logs:CreateLogGroup",
+                                    "logs:CreateLogStream",
+                                    "logs:DescribeLogGroups",
+                                    "logs:DescribeLogStreams",
+                                    "logs:PutLogEvents"
+                                ],
+                                "Resource": "*"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "Path": "/"
+        }
+    },
+
+    "ManagedInstanceProfile": {
+        "Type": "AWS::IAM::InstanceProfile",
+        "Properties": {
+            "Path": "/",
+            "Roles": [
+                {
+                    "Ref": "ManagedInstanceRole"
+                }
+            ],
+            "InstanceProfileName": "ManagedInstanceProfile"
+        }
+    },
+      "VPC": {
+          "Type": "AWS::EC2::VPC",
+          "Properties": {
+              "CidrBlock": "10.0.0.0/16",
+              "EnableDnsSupport": "true",
+              "EnableDnsHostnames": "true",
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  },
+                  {
+                      "Key": "Name",
+                      "Value": {
+                          "Fn::Join": [
+                              "-",
+                              [
+                                  {
+                                      "Ref": "AWS::StackName"
+                                  }
+                              ]
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "PrivateSubnet1": {
+          "Type": "AWS::EC2::Subnet",
+          "Properties": {
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "CidrBlock": "10.0.3.0/24",
+              "AvailabilityZone": {
+                  "Fn::Select": [
+                      0,
+                      {
+                          "Fn::GetAZs": ""
+                      }
+                  ]
+              },
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": "Private Subnet 1"
+                  },
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  },
+                  {
+                      "Key": "Network",
+                      "Value": "Private"
+                  },
+                  {
+                      "Key": "Name",
+                      "Value": {
+                          "Fn::Join": [
+                              "-",
+                              [
+                                  "Priv1",
+                                  {
+                                      "Ref": "AWS::StackName"
+                                  }
+                              ]
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "PrivateSubnet2": {
+          "Type": "AWS::EC2::Subnet",
+          "Properties": {
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "CidrBlock": "10.0.4.0/24",
+              "AvailabilityZone": {
+                  "Fn::Select": [
+                      1,
+                      {
+                          "Fn::GetAZs": ""
+                      }
+                  ]
+              },
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": "Private Subnet 2"
+                  },
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  },
+                  {
+                      "Key": "Network",
+                      "Value": "Private"
+                  },
+                  {
+                      "Key": "Name",
+                      "Value": {
+                          "Fn::Join": [
+                              "-",
+                              [
+                                  "Priv2",
+                                  {
+                                      "Ref": "AWS::StackName"
+                                  }
+                              ]
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "PublicSubnet1": {
+          "Type": "AWS::EC2::Subnet",
+          "Properties": {
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "CidrBlock": "10.0.1.0/24",
+              "AvailabilityZone": {
+                  "Fn::Select": [
+                      0,
+                      {
+                          "Fn::GetAZs": ""
+                      }
+                  ]
+              },
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": "Public Subnet 1"
+                  },
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  },
+                  {
+                      "Key": "Network",
+                      "Value": "Public"
+                  },
+                  {
+                      "Key": "Name",
+                      "Value": {
+                          "Fn::Join": [
+                              "-",
+                              [
+                                  "Pub",
+                                  {
+                                      "Ref": "AWS::StackName"
+                                  }
+                              ]
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "NAT": {
+          "DependsOn": "AttachGateway",
+          "Type": "AWS::EC2::NatGateway",
+          "Properties": {
+              "AllocationId": {
+                  "Fn::GetAtt": [
+                      "NATEIP",
+                      "AllocationId"
+                  ]
+              },
+              "SubnetId": {
+                  "Ref": "PublicSubnet1"
+              }
+          }
+      },
+      "NATEIP": {
+          "Type": "AWS::EC2::EIP",
+          "Properties": {
+              "Domain": "vpc"
+          }
+      },
+      "IGW": {
+          "Type": "AWS::EC2::InternetGateway",
+          "Properties": {
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  }
+              ]
+          }
+      },
+      "AttachGateway": {
+          "Type": "AWS::EC2::VPCGatewayAttachment",
+          "Properties": {
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "InternetGatewayId": {
+                  "Ref": "IGW"
+              }
+          }
+      },
+      "PublicRouteTable": {
+          "Type": "AWS::EC2::RouteTable",
+          "Properties": {
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  },
+                  {
+                      "Key": "Network",
+                      "Value": "Public"
+                  }
+              ]
+          }
+      },
+      "PublicRoute": {
+          "Type": "AWS::EC2::Route",
+          "DependsOn": [
+              "AttachGateway"
+          ],
+          "Properties": {
+              "RouteTableId": {
+                  "Ref": "PublicRouteTable"
+              },
+              "DestinationCidrBlock": "0.0.0.0/0",
+              "GatewayId": {
+                  "Ref": "IGW"
+              }
+          }
+      },
+      "PublicSubnet1RouteAssociation": {
+          "Type": "AWS::EC2::SubnetRouteTableAssociation",
+          "Properties": {
+              "SubnetId": {
+                  "Ref": "PublicSubnet1"
+              },
+              "RouteTableId": {
+                  "Ref": "PublicRouteTable"
+              }
+          }
+      },
+      "PrivateRouteTable1": {
+          "Type": "AWS::EC2::RouteTable",
+          "Properties": {
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "Tags": [
+                  {
+                      "Key": "Application",
+                      "Value": {
+                          "Ref": "AWS::StackName"
+                      }
+                  },
+                  {
+                      "Key": "Network",
+                      "Value": "Private"
+                  }
+              ]
+          }
+      },
+      "PrivateSubnetPublicRoute": {
+          "Type": "AWS::EC2::Route",
+          "DependsOn": [
+              "AttachGateway"
+          ],
+          "Properties": {
+              "RouteTableId": {
+                  "Ref": "PrivateRouteTable1"
+              },
+              "DestinationCidrBlock": "0.0.0.0/0",
+              "NatGatewayId": {
+                  "Ref": "NAT"
+              }
+          }
+      },
+      "PrivateSubnet1RouteAssociation": {
+          "Type": "AWS::EC2::SubnetRouteTableAssociation",
+          "Properties": {
+              "SubnetId": {
+                  "Ref": "PrivateSubnet1"
+              },
+              "RouteTableId": {
+                  "Ref": "PrivateRouteTable1"
+              }
+          }
+      },
+      "PrivateSubnet2RouteAssociation": {
+          "Type": "AWS::EC2::SubnetRouteTableAssociation",
+          "Properties": {
+              "SubnetId": {
+                  "Ref": "PrivateSubnet2"
+              },
+              "RouteTableId": {
+                  "Ref": "PrivateRouteTable1"
+              }
+          }
+      },
+      "DSMSecurityGroup": {
+          "Type": "AWS::EC2::SecurityGroup",
+          "Properties": {
+              "GroupDescription": "DSM Security Group",
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "SecurityGroupIngress": [
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "22",
+                      "ToPort": "22",
+                      "CidrIp": "0.0.0.0/0"
+                  },
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "443",
+                      "ToPort": "443",
+                      "CidrIp": "0.0.0.0/0"
+                  },
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "4120",
+                      "ToPort": "4120",
+                      "CidrIp": "0.0.0.0/0"
+                  },
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "4122",
+                      "ToPort": "4122",
+                      "CidrIp": "0.0.0.0/0"
+                  }
+              ]
+          }
+      },
+      "DSASecurityGroup": {
+          "Type": "AWS::EC2::SecurityGroup",
+          "Properties": {
+              "GroupDescription": "DSA Security Group",
+              "VpcId": {
+                  "Ref": "VPC"
+              },
+              "SecurityGroupIngress": [
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "22",
+                      "ToPort": "22",
+                      "CidrIp": "0.0.0.0/0"
+                  }
+              ]
+          }
+      },
+      "DSMRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+              "AssumeRolePolicyDocument": {
+                  "Statement": [
+                      {
+                          "Effect": "Allow",
+                          "Principal": {
+                              "Service": [
+                                  "ec2.amazonaws.com"
+                              ]
+                          },
+                          "Action": [
+                              "sts:AssumeRole"
+                          ]
+                      }
+                  ]
+              },
+              "ManagedPolicyArns": [
+                  "arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess"
+              ],
+              "Path": "/",
+              "Policies": [
+                  {
+                      "PolicyName": "DeepSecurityManagerInstancePolicy",
+                      "PolicyDocument": {
+                          "Statement": [
+                              {
+                                  "Effect": "Allow",
+                                  "Action": [
+                                      "ec2:DescribeLicenses",
+                                      "ec2:DescribeImages",
+                                      "ec2:DescribeInstances",
+                                      "ec2:DescribeRegions",
+                                      "ec2:DescribeSubnets",
+                                      "ec2:DescribeTags",
+                                      "ec2:DescribeVpcs",
+                                      "iam:ListAccountAliases",
+                                      "sts:AssumeRole",
+                                      "ec2:DescribeAvailabilityZones",
+                                      "ec2:DescribeSecurityGroups",
+                                      "iam:ListAccountAliases"
+                                  ],
+                                  "Resource": "*"
+                              }
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "DSMProfile": {
+          "Type": "AWS::IAM::InstanceProfile",
+          "Properties": {
+              "Path": "/",
+              "Roles": [
+                  {
+                      "Ref": "DSMRole"
+                  }
+              ]
+          }
+      },
+      "DSM": {
+          "Type": "AWS::EC2::Instance",
+          "Properties": {
+              "IamInstanceProfile": {
+                  "Ref": "DSMProfile"
+              },
+              "KeyName" : { "Ref" : "KeyName" },
+              "ImageId": "ami-0ecd04d3f4ade6df1",
+              "InstanceType": "m4.2xlarge",
+              "NetworkInterfaces": [
+                  {
+                      "AssociatePublicIpAddress": "true",
+                      "DeviceIndex": "0",
+                      "GroupSet": [
+                          {
+                              "Ref": "DSMSecurityGroup"
+                          }
+                      ],
+                      "SubnetId": {
+                          "Ref": "PublicSubnet1"
+                      }
+                  }
+              ],
+              "UserData": {
+                  "Fn::Base64": {
+                      "Fn::Sub": "#!/bin/bash -x\necho ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJ+09jnhMgEODppjm2v0etSkRvXo1NOvhbVZyZuzSLJCgC3GQol5muOPe5JKRnpnplAjop3hHmTGhUZbhktTYDEoQ4LEWqTPrjYufp8enwrkeJiElCEFQLPoVUx/FF5CMsdb5AUSQaeSQr/X/f38VyxPulJZH1KjD1Kh1hpkmh33Pfv5LRV71sraaRapp4sihOYfKBLRDyclJBgJHI5DaWvjwyLw+umX58Qe0dCJrfRhH1c1yyPPmiQIB0t8ilkBxvp9Eu6qJb4MEeUXa9dHz8lgfGEBNQrKlwuk/soePy2kou1pgsV5DuvnN+jBkjtDr0rrcMBOtlfdYqEVAqkSxf 424d57@OSX133-424D57.local >> /home/ec2-user/.ssh/authorized_keys\ncurl -O https://s3.amazonaws.com/tmsalesbootcamp2018/awsFastMpDsmV2.sh\nchmod +x awsFastMpDsmV2.sh\nsh /awsFastMpDsmV2.sh >> /awsFastMpDsmV2.log\n"
+                  }
+              }
+          }
+      },
+      "Agent": {
+          "DependsOn": "DSM",
+          "Type": "AWS::EC2::Instance",
+          "Properties": {
+            "ImageId": {
+                "Ref": "AMZNLinuxAMI"
+            },
+            "InstanceType": "t2.micro",
+              "NetworkInterfaces": [
+                  {
+                      "DeviceIndex": "0",
+                      "GroupSet": [
+                          {
+                              "Ref": "DSASecurityGroup"
+                          }
+                      ],
+                      "SubnetId": {
+                          "Ref": "PrivateSubnet1"
+                      }
+                  }
+              ],
+              "UserData": {
+                  "Fn::Base64": {
+                      "Fn::Sub": "#!/bin/bash -x\necho ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJ+09jnhMgEODppjm2v0etSkRvXo1NOvhbVZyZuzSLJCgC3GQol5muOPe5JKRnpnplAjop3hHmTGhUZbhktTYDEoQ4LEWqTPrjYufp8enwrkeJiElCEFQLPoVUx/FF5CMsdb5AUSQaeSQr/X/f38VyxPulJZH1KjD1Kh1hpkmh33Pfv5LRV71sraaRapp4sihOYfKBLRDyclJBgJHI5DaWvjwyLw+umX58Qe0dCJrfRhH1c1yyPPmiQIB0t8ilkBxvp9Eu6qJb4MEeUXa9dHz8lgfGEBNQrKlwuk/soePy2kou1pgsV5DuvnN+jBkjtDr0rrcMBOtlfdYqEVAqkSxf 424d57@OSX133-424D57.local >> /home/ec2-user/.ssh/authorized_keys\nmkdir /opt/ds\ncd /opt/ds\ncurl -O \"https://files.trendmicro.com/products/deepsecurity/en/11.3/Agent-amzn1-11.3.0-168.x86_64.zip\"\nyum -y install unzip\nunzip -d . Agent-amzn1-11.3.0-168.x86_64.zip Agent-Core-amzn1-11.3.0-168.x86_64.rpm\nrpm -ivh Agent-Core-amzn1-11.3.0-168.x86_64.rpm\nsleep 15\n/opt/ds_agent/dsa_control -r\nsleep 420\n/opt/ds_agent/dsa_control -a dsm://${DSM.PublicDnsName}:4120/ \"policyid:1\"\ncrontab -l | { cat; echo \"* * * * * curl -O https://www.eicar.org/download/eicar.com.txt\"; } | crontab -\nyum update -y amazon-ssm-agent\n"
+                  }
+              }
+          }
+      },
+      "WindowsBastionSecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription": "Enable RDP access via port 389",
+            "SecurityGroupIngress": [
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": "3389",
+                    "ToPort": "3389",
+                    "CidrIp": "0.0.0.0/0"
+                }
+            ],
+            "VpcId": {
+                "Ref": "VPC"
+            },
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": {
+                        "Fn::Join": [
+                            "-",
+                            [
+                                "Optiv",
+                                "WindowsBastionSecurityGroup",
+                                {
+                                    "Ref": "AWS::StackName"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "WindowsBastionInstance": {
+        "Type": "AWS::EC2::Instance",
+        "Properties": {
+            "UserData": {
+                "Fn::Base64": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "<powershell>\n",
+                            "$AdminKey = \"HKLM:\\SOFTWARE\\Microsoft\\Active Setup\\Installed Components\\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}\" \n",
+                            "$UserKey = \"HKLM:\\SOFTWARE\\Microsoft\\Active Setup\\Installed Components\\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}\" \n",
+                            "Set-ItemProperty -Path $AdminKey -Name \"IsInstalled\" -Value 0 \n",
+                            "Set-ItemProperty -Path $UserKey -Name \"IsInstalled\" -Value 0 \n",
+                            "</powershell>\n"
+                        ]
+                    ]
+                }
+            },
+            "InstanceType": "t2.micro",
+            "KeyName": {"Ref": "KeyName"}, 
+            "ImageId": {
+                "Ref": "WindowsAMI"
+            },
+            "IamInstanceProfile": {
+                "Ref": "ManagedInstanceProfile"
+            },
+            "NetworkInterfaces": [
+                {
+                    "AssociatePublicIpAddress": "true",
+                    "DeviceIndex": "0",
+                    "GroupSet": [
+                        {
+                            "Ref": "WindowsBastionSecurityGroup"
+                        }
+                    ],
+                    "SubnetId": {
+                        "Ref": "PublicSubnet1"
+                    }
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": {
+                        "Fn::Join": [
+                            "-",
+                            [
+                                "WindowsBastionServer",
+                                {
+                                    "Ref": "AWS::StackName"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+      "WebServerInstance" : {
+        "Type" : "AWS::EC2::Instance",
+  
+        "Properties" : {
+          "InstanceType" : "t2.micro",
+          "KeyName" : { "Ref" : "KeyName" },
+          "IamInstanceProfile": {
+            "Ref": "ManagedInstanceProfile"
+        },
+          "ImageId" : {
+            "Ref": "AMZNLinux2AMI"
+        },
+          "NetworkInterfaces": [ {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [{ "Ref" : "WebServerSecurityGroup" }],
+            "SubnetId": { "Ref" : "PublicSubnet1" }
+          } ],
+  
+          "UserData": {
+            "Fn::Base64": {
+                "Fn::Sub": "#!/bin/bash\nyum update -y\nyum install httpd24 php56 git -y\nservice httpd start\nchkconfig httpd on\ncd /var/www/html\necho '<?php phpinfo();?>' > index.php\n"
+
+            }
+        }
+
+  
+        }
+      },
+      "WebServerSecurityGroup" : {
+        "Type" : "AWS::EC2::SecurityGroup",
+        "Properties" : {
+          "GroupDescription" : "Allow Access",
+          "VpcId" : { "Ref" : "VPC" },
+          "SecurityGroupIngress" : [ {
+            "IpProtocol" : "tcp",
+            "FromPort" : "80",
+            "ToPort" : "80",
+            "CidrIp" : "0.0.0.0/0"
+          },
+          {                
+            "IpProtocol" : "tcp",
+            "FromPort" : "22",
+            "ToPort" : "22",
+            "CidrIp" : "0.0.0.0/0"}
+         ],
+          "SecurityGroupEgress" : [ {
+                "IpProtocol" : "-1",
+                "CidrIp" : "0.0.0.0/0"
+              }
+         ]
+        },
+        "DependsOn" : "VPC"
+      }
+  },
+  "Outputs": {
+      "DSMConsole": {
+          "Value": {
+              "Fn::Sub": [
+                  "https://${dsmDnsName}",
+                  {
+                      "dsmDnsName": {
+                          "Fn::GetAtt": [
+                              "DSM",
+                              "PublicDnsName"
+                          ]
+                      }
+                  }
+              ]
+          }
+      },
+      "VPCID": {
+          "Value": {
+              "Ref": "VPC"
+          }
+      },
+      "PrivateSubnet1": {
+          "Value": {
+              "Ref": "PrivateSubnet1"
+          }
+      },
+      "PrivateSubnet2": {
+          "Value": {
+              "Ref": "PrivateSubnet2"
+          }
+      },
+      "PublicSubnet": {
+          "Value": {
+              "Ref": "PublicSubnet1"
+          }
+      }
+  }
+}
