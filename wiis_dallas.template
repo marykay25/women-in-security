@@ -5,18 +5,14 @@
       "AWS::CloudFormation::Interface": {
           "ParameterGroups": [
               {
-                  "Label": {
-                      "default": "Web Server Configuration"
-                  },
-                  "Parameters": "KeyName"
-                  
+                  "Label": { "default": "Web Server Configuration" },
+                  "Parameters": [ "KeyName" ]
               }
           ],
           "ParameterLabels": {
               "KeyName": {
                   "default": "EC2 Key Pair for SSH access"
               }
-              
           }
       }
   },
@@ -38,12 +34,12 @@
         "Default": "/aws/service/ami-windows-latest/Windows_Server-2016-English-Full-Base"
     },
     "AMZNLinuxAMI": {
-        "Description": "The latest AMI ID for Windows 2019 Core in English",
+        "Description": "The latest AMI ID for Amazon Linux in English",
         "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
         "Default": "/aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-gp2"
     },
     "AMZNLinux2AMI": {
-        "Description": "The latest AMI ID for Windows 2019 Core in English",
+        "Description": "The latest AMI ID for Amazon Linux in English",
         "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
         "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
     }
@@ -645,7 +641,7 @@
                   "Ref": "DSMProfile"
               },
               "KeyName" : { "Ref" : "KeyName" },
-              "ImageId": "ami-0ecd04d3f4ade6df1",
+              "ImageId": "ami-0df091154c4066ff3",
               "InstanceType": "m4.2xlarge",
               "NetworkInterfaces": [
                   {
