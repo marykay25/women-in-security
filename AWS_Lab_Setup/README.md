@@ -115,5 +115,5 @@ It will take approximately **15** minutes for the DSM console be available even 
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/malware2.png) 
 
-23.  Proceed to the [Distributor Lab](https://github.com/marykay25/women-in-security/tree/master/AWS_Distributor).
+23.  Proceed to the [Lab Cleanup](https://github.com/marykay25/women-in-security/tree/master/AWS_Lab_Cleanup).
 

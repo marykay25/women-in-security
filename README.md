@@ -6,12 +6,7 @@
 In this lab you will gain experience in configuring AWS services and Trend Micro Deep Security.
 
 ## AWS Infrastructure and Trend Micro Console setup
-[Lab Setup](https://github.com/Halimer/wiis_dallas/tree/master/AWS_Lab_Setup)
-
-## Deploying the Deep Security Agent with AWS System Manager Distributor
-
-[Distributor Lab](https://github.com/Halimer/wiis_dallas/tree/master/AWS_Distributor)
-
+[Lab Setup](https://github.com/marykay25/women-in-security/tree/master/AWS_Lab_Setup)
 
 ## Lab Cleanup 
-[Lab Cleanup](https://github.com/Halimer/wiis_dallas/tree/master/AWS_Lab_Cleanup)
+[Lab Cleanup](https://github.com/marykay25/women-in-security/tree/master/AWS_Lab_Cleanup)
