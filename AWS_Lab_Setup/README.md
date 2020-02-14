@@ -16,15 +16,15 @@ If you do not see the navigation pane, it might be minimized; choose the arrow t
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/keys.png)
 
-3. Choose **Create Key Pair**.
+4. Choose **Create Key Pair**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/AWS_Key_Pair.png)
 
-4. Enter **WIIS** in the Key pair name field of and leave it as ppk, and then choose **Create key pair**.
+5. Enter **WIIS** in the Key pair name field and leave it as ppk, and then choose **Create key pair**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/AWS_Key_Pair_Name.png)
 
-5. The private key file will be automatically downloaded by your browser. The base file name is the name you specified as the name of your key pair, and the file name extension is .ppk. Save the file.
+6. The private key file will be automatically downloaded by your browser. The base file name is the name you specified as the name of your key pair, and the file name extension is .ppk. Save the file.
 
 ## Subscribing to Trend Micro Deep Security
 
