@@ -15,6 +15,8 @@ Your screen may look like either of these:
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/Clean_up1.png)
 
+## OR
+
 ![](https://github.com/marykay25/women-in-security/blob/master/images/delete2.png)
 
 4. This will delete everything you just created.
