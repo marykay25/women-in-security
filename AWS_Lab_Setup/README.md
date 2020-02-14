@@ -7,113 +7,107 @@ In this section we are going to use CloudFormation to quickly deploy the Trend M
 
 2. Verify that your region says **N. Virginia** in the top right-hand side of the screen.  If not, change it.  
 
-3. In the navigation pane on the left side of the screen, under NETWORK & SECURITY, choose **Key Pairs**.
+![](https://github.com/marykay25/women-in-security/blob/master/images/region.png)
+
+3. In the middle of the screen, select **Key Pairs**. It can also be found in the navigation pane on the left side of the screen, under NETWORK & SECURITY.
 
 **Note**
 If you do not see the navigation pane, it might be minimized; choose the arrow to expand the pane.
+
+![](https://github.com/marykay25/women-in-security/blob/master/images/keys.png)
 
 3. Choose **Create Key Pair**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/AWS_Key_Pair.png)
 
-4. Enter **WIIS-Dallas** in the Key pair name field of the Create Key Pair dialog box, and then choose **Create**.
+4. Enter **WIIS** in the Key pair name field of and leave it as ppk, and then choose **Create key pair**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/AWS_Key_Pair_Name.png)
 
-5. The private key file will be automatically downloaded by your browser. The base file name is the name you specified as the name of your key pair, and the file name extension is .pem. Save the file.
+5. The private key file will be automatically downloaded by your browser. The base file name is the name you specified as the name of your key pair, and the file name extension is .ppk. Save the file.
 
 ## Subscribing to Trend Micro Deep Security
 
-1. Go to the [Trend Micro Deep Security Marketplace](https://aws.amazon.com/marketplace/pp/B01AVYHVHO?qid=1553533248391&sr=0-2&ref_=brs_res_product_title) page to subscribe.
+1. In a new tab, go to the <a href="https://aws.amazon.com/marketplace/pp/B01AVYHVHO?qid=1553533248391&sr=0-2&ref_=brs_res_product_title" target="_blank">Trend Micro Deep Security Marketplace</a> page to subscribe.
 
 2. Click on the **Continue To Subscribe** button at the top.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/market1.PNG)
 
-3. Next click on the **Accept Terms** button.
+3. You are now subscribed to the product which means that you have accepted the EULA (end user license agreement).   
 
-![](https://github.com/marykay25/women-in-security/blob/master/images/market2.PNG)
+4. For the purposes of this lab, do **NOT** click on the button to Configure at the top. If the page says you are subscribed, then you can close this tab out. Proceed to the next section to deploy. 
 
-4. Wait until it tells you that you can configure the software. Do **NOT** click on the button to Configure at the top.  Proceed to the next section to deploy. 
-
-![](https://github.com/marykay25/women-in-security/blob/master/images/market4.PNG)
 
 ## Deploy CloudFormation
 
-1. Click to <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=wiisdallasLab&templateURL=https://wiis-dallas.s3.amazonaws.com/wiis_dallas.template" target="_blank">Launch CloudFormation</a>.
+1. Right click an open in a new tab to <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=wiisLab&templateURL=https://wiis-dallas.s3.amazonaws.com/wiis_dallas.template">Launch CloudFormation</a>.
 
-2. The template address should already be filled out for you.  Click the **Next** button.
+2. The Create Stack page should have a url pre-populated for you.  Click the **Next** button.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_S3_Template.png)
 
-3. Select 'WIIS-Dallas' as the **KeyName** from the second drop down and then click **Next**.
+3. Select 'WIIS' as the **KeyName** from the key pair drop down and then click **Next**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Details_Template.png)
 
-4. Click the **Next** button.
+4. On the Configure Stack Options page, leave everything blank and click **Next** at the bottom.
 
-5. Under **Key** enter 'Name'.
+5. On the Review page, at the bottom, select the box for 'I acknowledge that AWS CloudFormation might create IAM resources with custom names.'
 
-6. Under **Value** enter 'WIIS-Dallas-Lab'.
-
-7. Leave all other fields as the default and then click **Next**.
-
-![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Options.png)
-
-8. Select 'I acknowledge that AWS CloudFormation might create IAM resources.'
-
-9. Click the **Create** button.
+6. Click the **Create Stack** button.
 
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Review.png)
 
-10. Click the Refresh Button at the top right side of the screen to view the status of your stack. 
+7. Click the Refresh Button(s) to view the status of your stack. 
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Refresh_Button.png)
 
-11. Select the check box next to **wiisdallasLab**.
+8. The stack is done creating when you see it say **Create_Complete** under the wiisLab stack name.
 
-12. Repeat every few minutes until **Status** is **Create_Complete**.
+![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Create_Complete.png)
 
-13. Select **Outputs**.
+9. Select **Outputs**.
 
-14. Click on the DSM **URL**.  
+![](https://github.com/marykay25/women-in-security/blob/master/images/output.png)
+
+10. Right click on the on the DSM **URL** and open in a new tab.  
 
 **Note**
-It will take approximately **15** minutes for the DSM console be available even after the stack shows complete. 
+It will take several minutes for the DSM console be available even after the stack shows complete. If you get a message that the site cannot be reached, wait for a few minutes and refresh and try again.
 
-![](https://github.com/marykay25/women-in-security/blob/master/images/consoleurl.png)
 
-15. Once the console is available, you will receive a warning about the SSL certificate because we are using a self-signed certificate.  Click on **Advanced** and then **Proceed to URL** or **Accept the Risk and Continue** depending on your browser.
+11. Once the console is available, you will receive a warning about the SSL certificate because we are using a self-signed certificate.  Click on **Advanced** and then **Proceed to URL** or **Accept the Risk and Continue** depending on your browser.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/console_login.png)  
 
-16. Log in to the console with the Username **'Masteradmin'** and the Password **'Password123!'**.
+12. Log in to the console with the Username **'Masteradmin'** and the Password **'Password123!'**.
 
-17. Once the console has finished updating, the Dashboard will show Green in the Computer Status and **2** Computers managed. It may take a few minutes for the second instance to show up in the console. You may need to refresh the browser to see any updates.
+13. Once the console has finished updating, the Dashboard will show Green in the Computer Status and **2** Computers managed. It may take a few minutes for the second instance to show up in the console. You may need to refresh the browser to see any updates.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/console1.png) 
 
-18. Click on the Computers tab to see which instances are available.  If you need to narrow down your search, click on US East (Virginia). One of the instances will show Managed and will have the Base Policy Assigned to it.  
+14. Click on the Computers tab to see which instances are available.  If you need to narrow down your search, click on US East (Virginia). One of the instances will show Managed and will have the Base Policy Assigned to it.  
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/console2.png)  
 
-19. Double click on the instance to open it.  On the **Policy** drop down, expand **Base Policy** and then select **Linux Server**.  Press Save.
+15. Double click on the instance to open it.  On the **Policy** drop down, expand **Base Policy** and then select **Linux Server**.  Press Save.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/console3.png) 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/console4.png) 
 
-20. Wait a minute for the policy to send.  Once it's been sent, Anti-Malware will show **On, Real Time**.
+16. Wait a minute for the policy to send.  Once it's been sent, Anti-Malware will show **On, Real Time**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/console5.png) 
 
-21. The server is now protected.  Click on the Anti-Malware module and then Anti-Malware Events.  You will see that someone has been trying to download a virus but it's been stopped.  If you don't see any events, wait a minute and click refresh.
+17. The server is now protected.  Click on the Anti-Malware module and then Anti-Malware Events.  You will see that someone has been trying to download a virus but it's been stopped.  If you don't see any events, wait a minute and click refresh.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/malware.png) 
 
-22. Double click on any event to get the full details.  
+18. Double click on any event to get the full details.  
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/malware2.png) 
 
-23.  Proceed to the [Lab Cleanup](https://github.com/marykay25/women-in-security/tree/master/AWS_Lab_Cleanup).
+19.  Proceed to the [Lab Cleanup](https://github.com/marykay25/women-in-security/tree/master/AWS_Lab_Cleanup).
 

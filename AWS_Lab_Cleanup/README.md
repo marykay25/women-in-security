@@ -7,14 +7,10 @@ In this section we will clean up the resources in your AWS Account
 
 1. Go to [CloudFormation - AWS Console](http://console.aws.amazon.com/cloudformation)
 
-![](https://github.com/marykay25/women-in-security/blob/master/images/Clean_up2.png)
+2. Select the **wiislab**
 
-2. Select the **wiisdallaslab**
+3. Click **Delete**. And confirm when you get the pop up message.
 
-![](https://github.com/marykay25/women-in-security/blob/master/images/Clean_up3.png)
+![](https://github.com/marykay25/women-in-security/blob/master/images/Clean_up1.png)
 
-3. Click **Actions** then select **Delete Stack**
-
-![](https://github.com/marykay25/women-in-security/blob/master/images/Clean_up4.png)
-
-4. Click **Yes, Delete**
+4. This will delete everything you just created.
