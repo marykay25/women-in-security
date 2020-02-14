@@ -36,7 +36,7 @@ If you do not see the navigation pane, it might be minimized; choose the arrow t
 
 3. You are now subscribed to the product which means that you have accepted the EULA (end user license agreement).   
 
-4. For the purposes of this lab, do **NOT** click on the button to Configure at the top. If the page says you are subscribed, then you can close this tab out. Proceed to the next section to deploy. 
+4. For the purposes of this lab, do **NOT** click on the button to Configure at the top. You can close out this tab and proceed to the next section to deploy. 
 
 
 ## Deploy CloudFormation
