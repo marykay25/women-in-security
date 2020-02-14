@@ -41,13 +41,13 @@ If you do not see the navigation pane, it might be minimized; choose the arrow t
 
 ## Deploy CloudFormation
 
-1. Right click an open in a new tab to <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=wiisLab&templateURL=https://wiis-dallas.s3.amazonaws.com/wiis_dallas.template">Launch CloudFormation</a>.
+1. Right click and open in a new tab to <a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=wiisLab&templateURL=https://wiis-dallas.s3.amazonaws.com/wiis_dallas.template">Launch CloudFormation</a>.
 
-2. The Create Stack page should have a url pre-populated for you.  Click the **Next** button.
+2. The Create Stack page should have the url pre-populated for you.  Click the **Next** button.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_S3_Template.png)
 
-3. Select 'WIIS' as the **KeyName** from the key pair drop down and then click **Next**.
+3. For the **Stack_Name**, enter in **wiisLab** and select 'WIIS' as the **KeyName** from the key pair drop down and then click **Next**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Details_Template.png)
 
