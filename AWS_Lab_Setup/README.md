@@ -72,7 +72,7 @@ If you do not see the navigation pane, it might be minimized; choose the arrow t
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/output.png)
 
-10. Right click on the on the DSM **URL** and open in a new tab.  
+10. Right click on the on the DSM **URL** and open in a new tab.  **Use either Firefox, Safari or IE to open the URL.  Chrome and Edge recently made some changes making sites with self signed certificates not display properly.**
 
 **Note**
 It will take several minutes for the DSM console be available even after the stack shows complete. If you get a message that the site cannot be reached, wait for a few minutes and refresh and try again.
