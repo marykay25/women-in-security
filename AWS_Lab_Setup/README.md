@@ -3,7 +3,7 @@ In this section we are going to use CloudFormation to quickly deploy the Trend M
 
 ## Creating a Key Pair Using Amazon EC2
 
-1. Open the Amazon EC2 console at [https://console.aws.amazon.com/ec2/](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1).
+1. Right click on the on the link to open the Amazon EC2 console at [https://console.aws.amazon.com/ec2/](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1).
 
 2. Verify that your region says **N. Virginia** in the top right-hand side of the screen.  If not, change it.  
 
@@ -47,7 +47,7 @@ If you do not see the navigation pane, it might be minimized; choose the arrow t
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_S3_Template.png)
 
-3. For the **Stack_Name**, enter in **wiisLab** and select 'WIIS' as the **KeyName** from the key pair drop down and then click **Next**.
+3. For the **Stack_Name**, enter in **wiisLab** if it's not there and select 'WIIS' as the **KeyName** from the key pair drop down and then click **Next**.
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/CFT_Details_Template.png)
 
@@ -72,7 +72,7 @@ If you do not see the navigation pane, it might be minimized; choose the arrow t
 
 ![](https://github.com/marykay25/women-in-security/blob/master/images/output.png)
 
-10. Right click on the on the DSM **URL** and open in a new tab.  **Use either Firefox, Safari or IE to open the URL.  Chrome and Edge recently made some changes making sites with self signed certificates not display properly.**
+10. Right click on the on the DSM **URL** and open in a new tab.  **If you are using Chrome or Edge, make sure that it's at the lastest patch level.  Chrome and Edge recently made some changes making sites with self signed certificates not display properly but was fixed in the lastest release.**
 
 **Note**
 It will take several minutes for the DSM console be available even after the stack shows complete. If you get a message that the site cannot be reached, wait for a few minutes and refresh and try again.
